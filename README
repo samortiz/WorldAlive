@@ -1,9 +1,22 @@
 World Alive
 
- A life simulator
+ A life simulator.  This will simulate a world containing various life forms.
+You can add, view and try out various settings to see your species grow and 
+reproduce. 
 
-To run this, you need a servlet container (tomcat7 in my case).
 
-Installation help can be found in docs/
+Installation 
+  To run this, you will need a servlet container (tomcat7 in my case). 
+  Installation help can be found in docs/
 
+
+Features 
+ - Loads and saves the world state to files
+ - Plants and photosynthesis 
+ - Reproduction with various settings 
+
+
+Future Features
+ - Animals (herbivores and carnivores)
+ - programmable AI and life cycle
 
