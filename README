@@ -1,0 +1,9 @@
+World Alive
+
+ A life simulator
+
+To run this, you need a servlet container (tomcat7 in my case).
+
+Installation help can be found in docs/
+
+

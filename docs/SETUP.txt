@@ -1,0 +1,17 @@
+World Alive
+
+ Setup to run in a tomcat server, though it would probably run in most servers. 
+
+Create (or copy from this dir) the file :
+ /etc/tomcat7/Catalina/localhost/world_alive.xml 
+This file should contain the servlet name and mapping
+
+The data files will be created in the data directory, which is specified in 
+WorldIO.java  I chose a full file path, but you can always adjust this to 
+be a relative path if you want
+
+If you use the same servlet mappings that I used the URL to access the view will be :
+http://localhost:8080/world_alive/index.html
+
+
+
