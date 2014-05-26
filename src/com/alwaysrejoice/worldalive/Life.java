@@ -22,7 +22,7 @@ public class Life implements Serializable {
   private double stomachSize = 0.2; // percent of mass
 
   // Reproduction (inherited)
-  private int spawnDistance = 2; // distance offspring are born
+  private double spawnDistance = 2; // distance offspring are born
   private double birthMass = Const.MIN_MASS; // size of baby when born
   private double massToFetus = 1; // mass to each fetus each turn
   private double litterSize = 1; // Max number of fetus in womb at one time
@@ -45,6 +45,10 @@ public class Life implements Serializable {
 
   // Display (inherited)
   private String color = "green";
+  private String svgFile = null;
+  private int svgWidth = 0;
+  private String svgClass = "life";
+  
   
   // --------------- Constructors and Initialization -----------------------
 
@@ -194,25 +198,23 @@ public class Life implements Serializable {
     setLitterSize(parent.getLitterSize());
     setMassToStartReproducing(parent.getMassToStartReproducing());
     setColor(parent.getColor());
+    setSvgImage(parent.getSvgFile(), parent.getSvgWidth());
+    setSvgClass(parent.getSvgClass());
   }
   
   /**
    * Move to the new location
-   * Note : the borders will be desirable for plants as there is no competition in the void! 
    */
   public void moveTo(int inX, int inY) {
-    int newX = inX;
-    int newY = inY;
-    // Check the boundaries
-    if (newX < 0) newX = Const.MAX_X - newX;
-    if (newY < 0) newY = Const.MAX_Y - newY;
-    if (newX > Const.MAX_X) newX = Const.MAX_X - newX;
-    if (newY > Const.MAX_Y) newY = Const.MAX_Y - newY;
-    
-    this.x = newX;
-    this.y = newY;
+    this.x = inX;
+    this.y = inY;
   }
   
+  public void setSvgImage(String svgFile, int svgWidth) {
+    this.svgFile = svgFile;
+    this.svgWidth = svgWidth;
+  }
+
     
   // ---------------- Getters / Setters ------------------
 
@@ -231,7 +233,7 @@ public class Life implements Serializable {
   public int getY() {
     return y;
   }
-  
+
   public String getName() {
     return name;
   }
@@ -256,11 +258,11 @@ public class Life implements Serializable {
     this.stomachSize = stomachSize;
   }
   
-  public int getSpawnDistance() {
+  public double getSpawnDistance() {
     return spawnDistance;
   }
   
-  public void setSpawnDistance(int spawnDistance) {
+  public void setSpawnDistance(double spawnDistance) {
     this.spawnDistance = spawnDistance;
   }
 
@@ -356,6 +358,22 @@ public class Life implements Serializable {
 
   public void setColor(String color) {
     this.color = color;
+  }
+
+  public String getSvgFile() {
+    return svgFile;
+  }
+  
+  public int getSvgWidth() {
+    return svgWidth;
+  }
+
+  public String getSvgClass() {
+    return svgClass;
+  }
+
+  public void setSvgClass(String svgClass) {
+    this.svgClass = svgClass;
   }
 
   

@@ -122,7 +122,7 @@ public class Move {
    * Handle reproduction 
    */
   public void reproduce(Life life) {
-    int spawnDistance = life.getSpawnDistance();
+    double spawnDistance = life.getSpawnDistance();
     
     // Fetus growth
     if (life.getWomb().size() > 0) {
@@ -141,10 +141,20 @@ public class Move {
         child.addMass(life.getMassToFetus() * Const.MASS_TO_FETUS_MASS);
 
         if (child.getMass() > life.getBirthMass()) {
-          // Give birth (somewhere nearby)
-          int spawnX = life.getX() + random.nextInt(spawnDistance+1)-(spawnDistance/2);
-          int spawnY = life.getY() + random.nextInt(spawnDistance+1)-(spawnDistance/2);
-          child.moveTo(spawnX, spawnY);
+          // Some variation in exactly how far away 
+          spawnDistance = spawnDistance + (random.nextDouble()*(spawnDistance / 2)) - (spawnDistance/4);
+          
+          // Give birth spawnDistance away at a random angle (in radians)
+          double angle = random.nextDouble() * (Math.PI / 2);
+          double spawnX = Math.sin(angle) * spawnDistance;
+          double spawnY = Math.cos(angle) * spawnDistance;
+          if (random.nextBoolean()) spawnX = -spawnX;
+          if (random.nextBoolean()) spawnY = -spawnY;
+          
+          // offset to the parent
+          spawnX += life.getX();
+          spawnY += life.getY();
+          child.moveTo((int)spawnX,(int)spawnY);
           child.inheritFrom(life); // pass on the genes
           world.addBirth(child); // Add to the world
           babies.remove(); // remove from the womb

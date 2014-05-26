@@ -19,45 +19,49 @@ public class WorldServletListener implements ServletContextListener {
     timeThread = new Thread(time);
     timeThread.start();
 
-    
-    //world.getLives().clear();
-    Life l = new Life("Purple", 25, 25, 10);
+    world.getLives().clear();
+   
+    Life l = new Life("Shrub", 25, 25, 10);
     l.setPhotosynthesis(true);
-    l.setMassToStartReproducing(200000000);
-    l.setColor("purple");
-    world.addBirth(l);
- 
-    l = new Life("Green", 75, 25, 10);
-    l.setPhotosynthesis(true);
-    l.setMassToStartReproducing(100);
+    l.setMassToStartReproducing(6000);
     l.setLitterSize(1);
     l.setSpawnDistance(30);
     l.setMassToFetus(Const.MIN_MASS+0.1);
     l.setBirthMass(Const.MIN_MASS);
-    l.setColor("green");
+    l.setColor("#40DD40");
+    world.addBirth(l);
+ 
+    l = new Life("Green", 75, 25, 10);
+    l.setPhotosynthesis(true);
+    l.setMassToStartReproducing(Const.MIN_MASS*12*2 + 500);
+    l.setLitterSize(2);
+    l.setSpawnDistance(12);
+    l.setMassToFetus(Const.MIN_MASS+0.1);
+    l.setBirthMass(Const.MIN_MASS);
+    //l.setSvgImage("grass_16x16.svg", 16);
+    l.setColor("#00EE99");
     world.addBirth(l);
  
     l = new Life("Blue", 75, 75, 10);
     l.setPhotosynthesis(true);
-    l.setMassToStartReproducing(10000);
-    l.setLitterSize(1);
-    l.setSpawnDistance(40);
+    l.setMassToStartReproducing(6000);
+    l.setLitterSize(5);
+    l.setSpawnDistance(25);
     l.setMassToFetus(10);
-    l.setBirthMass(120);
-    l.setColor("blue");
+    l.setBirthMass(Const.MIN_MASS+1);
+    l.setColor("#009977");
     world.addBirth(l);
 
     l = new Life("Yellow", 25, 75, 10);
     l.setPhotosynthesis(true);
-    l.setMassToStartReproducing(1000);
-    l.setLitterSize(2);
-    l.setSpawnDistance(30);
-    l.setMassToFetus(Const.MIN_MASS+0.1);
-    l.setBirthMass(Const.MIN_MASS*3);
-    l.setColor("yellow");
+    l.setMassToStartReproducing(3000);
+    l.setLitterSize(3);
+    l.setSpawnDistance(14);
+    l.setMassToFetus(10);
+    l.setBirthMass(Const.MIN_MASS+1);
+    l.setColor("#224422");
     world.addBirth(l);
-    
-    
+ 
   }
 
   @Override

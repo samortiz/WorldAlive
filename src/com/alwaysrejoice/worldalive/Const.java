@@ -2,7 +2,7 @@ package com.alwaysrejoice.worldalive;
 
 public class Const {
 
-  public static final int CLOCK_DELAY = 0; // MS to delay in each loop  
+  public static final int CLOCK_DELAY = 100; // MS to delay in each loop  
   
   // ----------------- Conversion ----------------------------------
   
@@ -14,7 +14,7 @@ public class Const {
   // ----------------------- Limits---------------------------------
   
   // If you are smaller than this you are gone, and your place can be taken by someone else
-  public static final double MIN_MASS = 2;
+  public static final double MIN_MASS = 10;
 
   // Size of the world
   public static final int MAX_X = 100;
