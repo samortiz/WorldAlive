@@ -24,22 +24,23 @@ public class WorldAliveServlet extends HttpServlet {
         for (Life life : world.getLives()) {
           double radius = (life.getRadius() * SCALE);
           if (radius < 1) radius = 1;
-          String svgFile = life.getSvgFile();
-
+          String svgFile = life.getImgFile();
+          String svgClass = life.getImgClass();
+          
           if (svgFile != null) {
             // Draw an SVG Image
-            int svgWidth = life.getSvgWidth();
+            int svgWidth = life.getImgWidth();
             double svgScale = 2 * radius / svgWidth; 
             int imgX = (int)(((life.getX() * SCALE) - svgScale*(svgWidth/2))/svgScale);
             int imgY = (int)(((life.getY() * SCALE) - svgScale*(svgWidth/2))/svgScale);
-            out.println("<image  transform='scale("+svgScale+")' x='"+imgX+"' y='"+imgY+"' width='"+svgWidth+"' height='"+svgWidth+"' xlink:href='images/"+svgFile+"' />");
+            out.println("<image class="+svgClass+" transform='scale("+svgScale+")' x='"+imgX+"' y='"+imgY+"' width='"+svgWidth+"' height='"+svgWidth+"' xlink:href='images/"+svgFile+"' />");
 
           // Not an SVG image, use the default
           } else {
             String color = life.getColor();
             int x = life.getX() * SCALE;
             int y = life.getY() * SCALE;
-            out.println("<circle class='life' cx='"+x+"' cy='"+y+"' r='"+radius+"' fill='"+color+"' />");
+            out.println("<circle class='"+svgClass+"' cx='"+x+"' cy='"+y+"' r='"+radius+"' fill='"+color+"' fill-opacity='0.5' />");
           }
         } // for
         

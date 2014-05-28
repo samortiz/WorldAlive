@@ -20,13 +20,7 @@ public class Life implements Serializable {
   private String name = "";
   private boolean photosynthesis = false;
   private double stomachSize = 0.2; // percent of mass
-
-  // Reproduction (inherited)
-  private double spawnDistance = 2; // distance offspring are born
-  private double birthMass = Const.MIN_MASS; // size of baby when born
-  private double massToFetus = 1; // mass to each fetus each turn
-  private double litterSize = 1; // Max number of fetus in womb at one time
-  private double massToStartReproducing = 100; // when to start reproducing
+  private String ai = null;
   
   // Instance attributes (not inherited) 
   private double energy = 0.0;
@@ -42,12 +36,13 @@ public class Life implements Serializable {
   
   // Reproduction
   private List<Life> womb = new ArrayList<Life>();
-
+  private double spawnDistance = 1;
+  
   // Display (inherited)
   private String color = "green";
-  private String svgFile = null;
-  private int svgWidth = 0;
-  private String svgClass = "life";
+  private String imgFile = null;
+  private int imgWidth = 0;
+  private String imgClass = "life";
   
   
   // --------------- Constructors and Initialization -----------------------
@@ -67,7 +62,7 @@ public class Life implements Serializable {
   public Life(String name, int x, int y, double mass) {
     setId(newId());
     setName(name);
-    moveTo(x,y);
+    setXY(x,y);
     setMass(mass);
   }
   
@@ -85,7 +80,6 @@ public class Life implements Serializable {
    
   // ------------------ Misc ---------------------------
   
-  @Override
   public String toString() {
     DecimalFormat f = new DecimalFormat("0.#");
     StringBuffer display = new StringBuffer(
@@ -192,27 +186,23 @@ public class Life implements Serializable {
     setName(parent.getName());
     setPhotosynthesis(parent.getPhotosynthesis());
     setStomachSize(parent.getStomachSize());
-    setSpawnDistance(parent.getSpawnDistance());
-    setBirthMass(parent.getBirthMass());
-    setMassToFetus(parent.getMassToFetus());
-    setLitterSize(parent.getLitterSize());
-    setMassToStartReproducing(parent.getMassToStartReproducing());
+    setAI(parent.getAI());
     setColor(parent.getColor());
-    setSvgImage(parent.getSvgFile(), parent.getSvgWidth());
-    setSvgClass(parent.getSvgClass());
+    setImage(parent.getImgFile(), parent.getImgWidth());
+    setImgClass(parent.getImgClass());
   }
   
   /**
    * Move to the new location
    */
-  public void moveTo(int inX, int inY) {
+  public void setXY(int inX, int inY) {
     this.x = inX;
     this.y = inY;
   }
   
-  public void setSvgImage(String svgFile, int svgWidth) {
-    this.svgFile = svgFile;
-    this.svgWidth = svgWidth;
+  public void setImage(String imgFile, int imgWidth) {
+    this.imgFile = imgFile;
+    this.imgWidth = imgWidth;
   }
 
     
@@ -258,44 +248,12 @@ public class Life implements Serializable {
     this.stomachSize = stomachSize;
   }
   
-  public double getSpawnDistance() {
-    return spawnDistance;
-  }
-  
-  public void setSpawnDistance(double spawnDistance) {
-    this.spawnDistance = spawnDistance;
+  public String getAI() {
+    return ai;
   }
 
-  public double getBirthMass() {
-    return birthMass;
-  }
-  
-  public void setBirthMass(double birthMass) {
-    this.birthMass = birthMass;
-  }
-
-  public double getMassToFetus() {
-    return massToFetus;
-  }
-
-  public void setMassToFetus(double massToFetus) {
-    this.massToFetus = massToFetus;
-  }
-
-  public double getLitterSize() {
-    return litterSize;
-  }
-
-  public void setLitterSize(double litterSize) {
-    this.litterSize = litterSize;
-  }
-
-  public double getMassToStartReproducing() {
-    return massToStartReproducing;
-  }
-
-  public void setMassToStartReproducing(double massToStartReproducing) {
-    this.massToStartReproducing = massToStartReproducing;
+  public void setAI(String ai) {
+    this.ai = ai;
   }
 
   public double getEnergy() {
@@ -308,10 +266,6 @@ public class Life implements Serializable {
   
   public boolean isAlive() {
     return alive;
-  }
-
-  public void setAlive(boolean alive) {
-    this.alive = alive;
   }
 
   public int getDaysDead() {
@@ -348,8 +302,12 @@ public class Life implements Serializable {
     return womb;
   }
 
-  public void setWomb(List<Life> womb) {
-    this.womb = womb;
+  public double getSpawnDistance() {
+    return spawnDistance;
+  }
+
+  public void setSpawnDistance(double spawnDistance) {
+    this.spawnDistance = spawnDistance;
   }
 
   public String getColor() {
@@ -360,20 +318,20 @@ public class Life implements Serializable {
     this.color = color;
   }
 
-  public String getSvgFile() {
-    return svgFile;
+  public String getImgFile() {
+    return imgFile;
   }
   
-  public int getSvgWidth() {
-    return svgWidth;
+  public int getImgWidth() {
+    return imgWidth;
   }
 
-  public String getSvgClass() {
-    return svgClass;
+  public String getImgClass() {
+    return imgClass;
   }
 
-  public void setSvgClass(String svgClass) {
-    this.svgClass = svgClass;
+  public void setImgClass(String imgClass) {
+    this.imgClass = imgClass;
   }
 
   

@@ -1,7 +1,6 @@
 package com.alwaysrejoice.worldalive;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 public class LifeUtils {
 
@@ -20,7 +19,12 @@ public class LifeUtils {
   public static void validate(Life life) {
     // everyone has a womb
     if (life.getWomb() == null) {
-      life.setWomb(new ArrayList<Life>());
+      life.kill();
+    }
+    
+    // Must be at least 1! (or else it's reducing the cost to produce a child)
+    if (life.getSpawnDistance() < 1.0) {
+      life.kill();
     }
     
     // NaN

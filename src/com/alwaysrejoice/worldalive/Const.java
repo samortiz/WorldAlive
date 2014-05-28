@@ -2,7 +2,7 @@ package com.alwaysrejoice.worldalive;
 
 public class Const {
 
-  public static final int CLOCK_DELAY = 100; // MS to delay in each loop  
+  public static final int CLOCK_DELAY = 000; // MS to delay in each loop  
   
   // ----------------- Conversion ----------------------------------
   
@@ -17,8 +17,8 @@ public class Const {
   public static final double MIN_MASS = 10;
 
   // Size of the world
-  public static final int MAX_X = 100;
-  public static final int MAX_Y = 100;
+  public static final int MAX_X = 300;
+  public static final int MAX_Y = 200;
   
   
   // ---------------------- Reproduction ---------------------------
@@ -37,6 +37,12 @@ public class Const {
   public static final double PHOTO_ENERGY_GENERATED_PER_AREA = 1.0;
   public static final double PLANT_BMR_PER_MASS = 0.05; // energy burned 
 
+  // ------------------ Animals ---------------------------------------
+  
+  public static final double BASE_ANIMAL_BMR_PER_MASS = 0.05; // energy burned 
+  public static final double HERBIVORE_INTAKE_MASS = 0.8;   // percent mass a herbivore gets from a plant
+
+  
   
   // -------------------- Death and Decay --------------------------
   // How long until decay starts

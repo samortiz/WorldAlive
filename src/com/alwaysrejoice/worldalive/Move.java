@@ -1,13 +1,8 @@
 package com.alwaysrejoice.worldalive;
 
-import java.text.DecimalFormat;
-import java.util.Iterator;
-import java.util.Random;
-
 public class Move {
 
   // Move variables 
-  private Random random = new Random();
   private World world;
 
   
@@ -29,13 +24,8 @@ public class Move {
       // Basal Metabolic Rate
       expendBMREnergy(life);
   
-      // Reproduction
-      reproduce(life);
-      
-      // Convert extra energy into mass
-      if (life.getEnergy() > 0) {
-        life.energyToMass(life.getEnergy() * 0.8);
-      }
+      // Run the life's AI
+      Ai.run(life);
       
       // Ensure nothing funny is going on
       LifeUtils.validate(life);
@@ -65,7 +55,13 @@ public class Move {
    * Use energy just to stay alive
    */
   public void expendBMREnergy(Life life) {
-    double bmr = life.getMass() * Const.PLANT_BMR_PER_MASS;
+    double bmr = 0;
+    if (life.getPhotosynthesis()) {
+      bmr = life.getMass() * Const.PLANT_BMR_PER_MASS;
+    } else {
+      bmr = life.getMass() * Const.BASE_ANIMAL_BMR_PER_MASS;
+    }
+    
     life.addEnergy(-bmr);
   }
   
@@ -118,64 +114,7 @@ public class Move {
     life.addEnergy(newEnergy);
   }
   
-  /**
-   * Handle reproduction 
-   */
-  public void reproduce(Life life) {
-    double spawnDistance = life.getSpawnDistance();
-    
-    // Fetus growth
-    if (life.getWomb().size() > 0) {
-      Iterator<Life> babies = life.getWomb().iterator();
-      while (babies.hasNext()) {
-        Life child = babies.next();
-        double fetusMassCost = life.getMassToFetus();
-        
-        // Extra costs for fetus development
-        if (spawnDistance > 1) {
-          fetusMassCost = fetusMassCost * spawnDistance * Const.SPAWN_DISTANCE_MASS_COST;
-        }
-        
-        // Increase the fetus, decrease the mother
-        life.addMass(-fetusMassCost);
-        child.addMass(life.getMassToFetus() * Const.MASS_TO_FETUS_MASS);
-
-        if (child.getMass() > life.getBirthMass()) {
-          // Some variation in exactly how far away 
-          spawnDistance = spawnDistance + (random.nextDouble()*(spawnDistance / 2)) - (spawnDistance/4);
-          
-          // Give birth spawnDistance away at a random angle (in radians)
-          double angle = random.nextDouble() * (Math.PI / 2);
-          double spawnX = Math.sin(angle) * spawnDistance;
-          double spawnY = Math.cos(angle) * spawnDistance;
-          if (random.nextBoolean()) spawnX = -spawnX;
-          if (random.nextBoolean()) spawnY = -spawnY;
-          
-          // offset to the parent
-          spawnX += life.getX();
-          spawnY += life.getY();
-          child.moveTo((int)spawnX,(int)spawnY);
-          child.inheritFrom(life); // pass on the genes
-          world.addBirth(child); // Add to the world
-          babies.remove(); // remove from the womb
-        }
-        
-      }
-    }
-
-    
-    // Conception
-    if (life.getMass() > life.getMassToStartReproducing()) {
-      // If womb is empty conceive (all at once)
-      if (life.getWomb().size() == 0) {
-        for (int i=0; i<life.getLitterSize(); i++) {
-          life.addMass(-life.getMassToFetus());
-          Life child = new Life(life.getName(), life.getMassToFetus());
-          life.getWomb().add(child);
-        } // for
-      }
-    }
-  }
+  
   
   
 }
