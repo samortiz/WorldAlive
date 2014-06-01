@@ -4,7 +4,8 @@ import com.alwaysrejoice.worldalive.Const;
 
 public class GrassAI extends BaseAI {
 
-  
+  private static final long serialVersionUID = 1L;
+
   public GrassAI() {
     this.massToStartReproducing = ((Const.MIN_MASS+1)*10) + 150;
     this.litterSize = 1;

@@ -3,15 +3,6 @@ package com.alwaysrejoice.worldalive;
 import java.text.DecimalFormat;
 
 public class LifeUtils {
-
-  /**
-   * Set default values for variables that are missing values
-   */
-  public static void setDefaults(Life life) {
-    // Default values 
-    if (life.getId() == 0) life.setId(System.currentTimeMillis());
-  }
- 
   
   /**
    * Life grows by regulation
@@ -42,6 +33,12 @@ public class LifeUtils {
     // Make sure you are in the world
     if ((life.getX() < 0) || (life.getY() < 0) || 
        (life.getX() > Const.MAX_X) || (life.getY() > Const.MAX_Y)) {
+      life.kill();
+    }
+    
+    // Ensure attack/defence is valid (plants must be 0)
+    double actionSum = life.getAttack() + life.getDefence() + life.getStomachSize() + life.getMetabolism();
+    if ((actionSum > 1.0) || ((actionSum > 0) && life.getPhotosynthesis())) {
       life.kill();
     }
     

@@ -4,23 +4,24 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import com.alwaysrejoice.worldalive.ai.BaseAI;
 
 public class Life implements Serializable {
 
-  // System stuff
+  // System stuff (not inherited)
   private static final long serialVersionUID = 1L;
-  private static long lastId = 0; // stores the last generated ID
   
   // System Attributes (not inherited)
-  private long id = 0;
+  private UUID id = null;
   private int x = 0;
   private int y = 0;
   
   // General attributes (inherited) 
   private String name = "";
   private boolean photosynthesis = false;
-  private double stomachSize = 0.2; // percent of mass
-  private String ai = null;
+  private String aiClass = null;
   
   // Instance attributes (not inherited) 
   private double energy = 0.0;
@@ -28,13 +29,18 @@ public class Life implements Serializable {
   private boolean alive = true;
   private int daysDead = 0;
   private int daysAlive = 0;
+  private BaseAI aiInstance = null;
+  
+  // Turn variables (not inherited)
+  private double action = 0;  // How much time you have for this turn
+  private double stomachContentMass = 0;  
 
   // Calculated values (not inherited)
   private double radius = 1.0; 
   private double area = 1.0; 
   private double height = 1.0;
   
-  // Reproduction
+  // Reproduction (not inherited)
   private List<Life> womb = new ArrayList<Life>();
   private double spawnDistance = 1;
   
@@ -44,6 +50,14 @@ public class Life implements Serializable {
   private int imgWidth = 0;
   private String imgClass = "life";
   
+  // Fighting  (inherited)
+  //  - all these cannot sum more than 1.0  (enforced in LifeUtils.validator)
+  //  - Increasing any of these increases your BMR 
+  //  - All these must be 0 if photosynthesis is true (enforced in LifeUtils.validator)
+  private double attack = 0; // 0-1
+  private double defence = 0; // 0-1
+  private double stomachSize = 0; // 0-1
+  private double metabolism = 0;  // 0-1  How fast you can move (effects action)
   
   // --------------- Constructors and Initialization -----------------------
 
@@ -51,7 +65,7 @@ public class Life implements Serializable {
    * Conception (not yet in the world)
    */
   public Life(String name, double mass) {
-    setId(newId());
+    setId(UUID.randomUUID());
     setName(name);
     setMass(mass);
   }
@@ -60,24 +74,12 @@ public class Life implements Serializable {
    * Used when adding a creature to the world
    */
   public Life(String name, int x, int y, double mass) {
-    setId(newId());
+    setId(UUID.randomUUID());
     setName(name);
     setXY(x,y);
     setMass(mass);
   }
   
-  /**
-   * Generate a new ID, try to make this unique
-   */
-  public synchronized long newId() {
-    long newId = System.currentTimeMillis();
-    while (newId == Life.lastId) {
-      newId = System.currentTimeMillis();
-    }
-    Life.lastId = newId;
-    return newId;
-  }
-   
   // ------------------ Misc ---------------------------
   
   public String toString() {
@@ -103,6 +105,10 @@ public class Life implements Serializable {
 
   public void addMass(double amount) {
     setMass(mass + amount);
+  }
+  
+  public void addAction(double amount) {
+    setAction(action + amount);
   }
   
   /**
@@ -139,7 +145,8 @@ public class Life implements Serializable {
    * Sets the mass and recalculates the other dependent variables
    */
   public void setMass(double newMass) {
-    if (newMass < Const.MIN_MASS) {
+    // Only do checks on creatures that have been born
+    if ((daysAlive > 0) && (newMass < Const.MIN_MASS)) {
       this.mass = 0;
       this.radius = 0;
       this.area = 0;
@@ -147,11 +154,22 @@ public class Life implements Serializable {
       if (alive) kill();
     }
     this.mass = newMass;
-    this.radius = Math.pow((mass * 1.5 / Math.PI), 0.3333333); // volume of hemisphere
+    this.radius = massToRadius(mass);
     this.area = Math.PI * radius * radius; // area of circle
     this.height = radius;
   }
 
+  public double massToRadius(double mass) {
+    // volume of hemisphere
+    return Math.pow((mass * 1.5 / Math.PI), 0.3333333); 
+  }
+  
+  public double radiusToMass(double radius) {
+    // volume of hemisphere
+    return Math.PI * 0.66666 * mass * mass * mass;
+  }
+  
+  
   /** 
    * Kills this creature.  
    */
@@ -174,7 +192,7 @@ public class Life implements Serializable {
    * Short version of the ID
    */
   public String getShortId() {
-    String shortId = Long.toString(id);
+    String shortId = id.toString();
     return shortId.substring(shortId.length()-4);
   }
   
@@ -186,10 +204,14 @@ public class Life implements Serializable {
     setName(parent.getName());
     setPhotosynthesis(parent.getPhotosynthesis());
     setStomachSize(parent.getStomachSize());
-    setAI(parent.getAI());
+    setAIClass(parent.getAIClass());
     setColor(parent.getColor());
     setImage(parent.getImgFile(), parent.getImgWidth());
     setImgClass(parent.getImgClass());
+    setAttack(parent.getAttack());
+    setDefence(parent.getDefence());
+    setStomachSize(parent.getStomachSize());
+    setMetabolism(parent.getMetabolism());
   }
   
   /**
@@ -205,14 +227,21 @@ public class Life implements Serializable {
     this.imgWidth = imgWidth;
   }
 
+  /**
+   * Returns the sum of all the fighting variables (total <= 1.0)
+   */
+  public double getTotalAction() {
+    return attack + defence + stomachSize + metabolism;
+  }
+  
     
   // ---------------- Getters / Setters ------------------
 
-  public long getId() {
+  public UUID getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(UUID id) {
     this.id = id;
   }
   
@@ -240,20 +269,12 @@ public class Life implements Serializable {
     this.photosynthesis = photosynthesis;
   }
   
-  public double getStomachSize() {
-    return stomachSize;
+  public String getAIClass() {
+    return aiClass;
   }
 
-  public void setStomachSize(double stomachSize) {
-    this.stomachSize = stomachSize;
-  }
-  
-  public String getAI() {
-    return ai;
-  }
-
-  public void setAI(String ai) {
-    this.ai = ai;
+  public void setAIClass(String aiClass) {
+    this.aiClass = aiClass;
   }
 
   public double getEnergy() {
@@ -283,6 +304,30 @@ public class Life implements Serializable {
 
   public void setDaysAlive(int daysAlive) {
     this.daysAlive = daysAlive;
+  }
+
+  public BaseAI getAiInstance() {
+    return aiInstance;
+  }
+
+  public void setAiInstance(BaseAI aiInstance) {
+    this.aiInstance = aiInstance;
+  }
+
+  public double getAction() {
+    return action;
+  }
+
+  public void setAction(double action) {
+    this.action = action;
+  }
+
+  public double getStomachContentMass() {
+    return stomachContentMass;
+  }
+
+  public void setStomachContentMass(double stomachContentMass) {
+    this.stomachContentMass = stomachContentMass;
   }
 
   public double getRadius() {
@@ -334,5 +379,36 @@ public class Life implements Serializable {
     this.imgClass = imgClass;
   }
 
-  
+  public double getAttack() {
+    return attack;
+  }
+
+  public void setAttack(double attack) {
+    this.attack = attack;
+  }
+
+  public double getDefence() {
+    return defence;
+  }
+
+  public void setDefence(double defence) {
+    this.defence = defence;
+  }
+
+  public double getStomachSize() {
+    return stomachSize;
+  }
+
+  public void setStomachSize(double stomachSize) {
+    this.stomachSize = stomachSize;
+  }
+
+  public double getMetabolism() {
+    return metabolism;
+  }
+
+  public void setMetabolism(double metabolism) {
+    this.metabolism = metabolism;
+  }
+
 }

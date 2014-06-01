@@ -1,7 +1,12 @@
 package com.alwaysrejoice.worldalive;
 
-public class Move {
+import java.io.Serializable;
 
+import com.alwaysrejoice.worldalive.ai.BaseAI;
+
+public class Move implements Serializable {
+
+  private static final long serialVersionUID = 1L;
   // Move variables 
   private World world;
 
@@ -25,7 +30,7 @@ public class Move {
       expendBMREnergy(life);
   
       // Run the life's AI
-      Ai.run(life);
+      runAI(life);
       
       // Ensure nothing funny is going on
       LifeUtils.validate(life);
@@ -59,7 +64,9 @@ public class Move {
     if (life.getPhotosynthesis()) {
       bmr = life.getMass() * Const.PLANT_BMR_PER_MASS;
     } else {
-      bmr = life.getMass() * Const.BASE_ANIMAL_BMR_PER_MASS;
+      // Animals can lower their BMR by not using all their action points
+      bmr = (life.getMass() * Const.BASE_ANIMAL_BMR_PER_MASS) * life.getTotalAction();
+      if (bmr == 0) bmr = 10; // Nobody lives for free 
     }
     
     life.addEnergy(-bmr);
@@ -76,7 +83,7 @@ public class Move {
     double area = life.getArea(); 
     double overlap = 0.0;
     
-    Neighbors neighbors = world.getNeighbors(life);
+    Neighbors neighbors = world.getNeighbors(life, true); // only plants
     for (Life him : neighbors.getNeighbors()) {
       // The taller one gets the sunlight
       if (life.getHeight() < him.getHeight()) {
@@ -116,5 +123,45 @@ public class Move {
   
   
   
+  /**
+   * Runs the AI for a life
+   */
+  public void runAI(Life life) {
+    BaseAI aiInstance = life.getAiInstance();
+
+    // If we don't have an instance created yet
+    if (aiInstance == null) {
+      String aiClass = life.getAIClass();
+      // If there is no AI, just exit
+      if (aiClass == null) return;
+      
+      try {
+        Object someAI = Class.forName("com.alwaysrejoice.worldalive.ai."+aiClass).newInstance();
+        if (someAI instanceof BaseAI) {
+          aiInstance = (BaseAI) someAI;
+          aiInstance.setLife(life);
+          life.setAiInstance(aiInstance);
+        }
+             
+      } catch (Exception e) {
+        System.out.println("Error creating instance of AI '"+aiClass+"' for : "+life.getName()+" id="+life.getId());
+        e.printStackTrace();
+      }
+    }
+    
+    if (aiInstance != null) {
+      life.setAction(calculateAction(life)); // full action to start
+      life.setStomachContentMass(0); // empty stomach to start
+      aiInstance.run();
+      aiInstance.clearNeighbors();
+    }
+  }
+
+  /**
+   * Determines how much movement this creature can do in one turn
+   */
+  private double calculateAction(Life life) {
+    return 100 + (life.getMetabolism() * Const.ACTION_SCALE);
+  }
   
 }

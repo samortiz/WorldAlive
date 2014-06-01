@@ -1,8 +1,14 @@
 package com.alwaysrejoice.worldalive;
 
+import java.text.DecimalFormat;
+
 public class Const {
 
-  public static final int CLOCK_DELAY = 000; // MS to delay in each loop  
+  // -------------------- System -----------------------------------
+
+  public static final int CLOCK_DELAY = 500; // each loop should be at least this many milliseconds
+  public static final DecimalFormat f = new DecimalFormat("0");
+  
   
   // ----------------- Conversion ----------------------------------
   
@@ -33,15 +39,26 @@ public class Const {
   // For example if set to 0.8  then 80% of the light is absorbed and plants under one layer 
   // will only receive 20% of the PHOTO_ENERGY_GENERATED_PER_AREA 
   // This should be (0 < x <= 1)
-  public static final double PHOTO_ENERGY_ABSORBED = 0.8; 
+  public static final double PHOTO_ENERGY_ABSORBED = 0.6; 
   public static final double PHOTO_ENERGY_GENERATED_PER_AREA = 1.0;
-  public static final double PLANT_BMR_PER_MASS = 0.05; // energy burned 
+  public static final double PLANT_BMR_PER_MASS = 0.04; // energy burned 
 
+  
   // ------------------ Animals ---------------------------------------
   
-  public static final double BASE_ANIMAL_BMR_PER_MASS = 0.05; // energy burned 
-  public static final double HERBIVORE_INTAKE_MASS = 0.8;   // percent mass a herbivore gets from a plant
-
+  public static final double BASE_ANIMAL_BMR_PER_MASS = 0.1; // energy burned 
+  public static final double HERBIVORE_INTAKE_MASS = 0.5;  // energy a herbivore gets from a plant
+  public static final double CARNIVORE_INTAKE_MASS = 0.99; // energy a carnivore gets from an animal
+  public static final double ATTACK_COST = 0.005; // cost in energy to attack scaled by your mass
+ 
+  
+  // --------------------- Action -------------------------------------
+  
+  public static final double ACTION_SCALE = 300; // How much extra action you get for your metabolism
+  public static final double ACTION_COST_TO_ATTACK = 10; // how much action it costs to attack 
+  public static final double ACTION_COST_TO_MOVE_SCALE = 100; // how much action it costs to move 2 * radius
+  public static final double ACTION_COST_TO_CONCEIVE = 50; 
+  public static final double ACTION_COST_TO_DELIVER_BABY = 100;
   
   
   // -------------------- Death and Decay --------------------------
@@ -51,5 +68,11 @@ public class Const {
   public static final double DECAY_RATE = 0.5;
   
   
+  /**
+   * Convenience method to format 
+   */
+  public static String f (double toFormat) {
+    return f.format(toFormat);
+  }
   
 }

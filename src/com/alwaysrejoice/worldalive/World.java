@@ -7,7 +7,8 @@ public class World {
   // The whole world
   private static World world = null;
  
-  private List<Life> lives = new ArrayList<Life>();
+  private List<Life> plants = new ArrayList<Life>();
+  private List<Life> animals = new ArrayList<Life>();
   private List<Life> births = new ArrayList<Life>();
   
   
@@ -24,6 +25,32 @@ public class World {
     }
     return world;
   }
+
+  /**
+   * Returns the correct list of plants or animals
+   */
+  public List<Life> getLives(boolean photosynthesis) {
+    if (photosynthesis) {
+      return plants;
+    } else {
+      return animals;
+    }
+  }
+
+  /** 
+   * Returns a new list with all the plants an animals
+   * NOTE : This is not efficient, so it may be better to call plants and animals separately
+   */
+  public List<Life> getAllLives() {
+    List<Life> lives = new ArrayList<Life>(plants.size()+animals.size());
+    lives.addAll(plants);
+    lives.addAll(animals);
+    return lives;
+  }
+  
+  public List<Life> getBirths() {
+    return births;
+  }
   
   /**
    * Adds a Life to the birth-queue of the world
@@ -33,11 +60,12 @@ public class World {
   public void addBirth(Life life) {
     births.add(life);
   }
-
+  
   /**
    * Adds a life to the world. 
    */
   public void addLife(Life baby) {
+    List<Life> lives = getLives(baby.getPhotosynthesis());
     // Find an empty spot in the array
     for (int i=0; i<lives.size(); i++) {
       Life life = lives.get(i);
@@ -53,12 +81,13 @@ public class World {
   /**
    * Returns a list of all the neighbours within distance of (x,y)
    */
-  public Neighbors getNeighbors(int x, int y, int distance) {
+  public Neighbors getNeighbors(int x, int y, int distance, boolean photosynthesis) {
     Neighbors neighbors = new Neighbors();
     int minX = x - distance;
     int maxX = x + distance;
     int minY = y - distance;
     int maxY = y + distance;
+    List<Life> lives = getLives(photosynthesis);
     for (Life life : lives) {
       if (life.isGone()) continue;
       
@@ -79,10 +108,12 @@ public class World {
    * Returns a list of all the neighbours that overlap (by radius) 
    * This depends on your radius and the radius of everyone else! 
    */
-  public Neighbors getNeighbors(Life me) {
+  public Neighbors getNeighbors(Life me, boolean photosynthesis) {
     Neighbors neighbors = new Neighbors();
     int x = me.getX();
     int y = me.getY();
+    List<Life> lives = getLives(photosynthesis);
+    
     for (Life life : lives) {
       // exclude yourself and dearly departed
       if (life.isGone() || (life == me)) continue;
@@ -103,15 +134,5 @@ public class World {
     return neighbors;
   }
   
-  
-  
-  // ----------------- Getters / Setters -----------------
-  
-  public List<Life> getLives() {
-    return lives;
-  }
-
-  public List<Life> getBirths() {
-    return births;
-  }
+ 
 }

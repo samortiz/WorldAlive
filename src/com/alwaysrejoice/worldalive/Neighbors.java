@@ -59,6 +59,17 @@ public class Neighbors {
     return neighbors;
   }
   
+  /**
+   * Returns the neighbor at the specified index
+   */
+  public Life get(int i) {
+    return neighbors.get(i);
+  }
+  
+  public int getNeighborCount() {
+    return neighbors.size();
+  }
+  
   /** 
    * Display a list of neighbors
    */

@@ -22,25 +22,26 @@ public class WorldIO {
   public static void load(World world) {
     System.out.println("God created the heavens and the earth.");
     ObjectInputStream in = null;
-    List<Life> lives = world.getLives();
+    List<Life> plants = world.getLives(true);
+    List<Life> animals = world.getLives(false);
     try {
       FileInputStream streamIn = new FileInputStream(DIR+LIVES_FILE);
       in = new ObjectInputStream(streamIn);
       @SuppressWarnings("unchecked")
       List<Life> loadedLives = (List<Life>)in.readObject();
       for (Life life : loadedLives) {
-        // If this class was saved with a previous version of Life
-        // there may be variables missing default values. 
-        LifeUtils.setDefaults(life);
-        
         // Check that the life is valid
         try {
           LifeUtils.validate(life);
+          // Add the life to the world  
+          if (life.getPhotosynthesis()) {
+            plants.add(life);
+          } else {
+            animals.add(life);
+          }
         } catch (DeathException e) {
           // It's OK. He's dead
         }
-        // Add the life to the world   
-        lives.add(life);
         System.out.println("Loaded "+life);
       } 
     } catch (FileNotFoundException e) {
@@ -68,7 +69,7 @@ public class WorldIO {
   public static void store(World world) {
     ObjectOutputStream out = null;
     FileOutputStream fout = null;
-    List<Life> lives = world.getLives();
+    List<Life> lives = world.getAllLives();
     try {
       fout = new FileOutputStream(DIR+LIVES_FILE, false);
       out = new ObjectOutputStream(fout);

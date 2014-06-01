@@ -19,35 +19,49 @@ public class WorldServletListener implements ServletContextListener {
     timeThread = new Thread(time);
     timeThread.start();
 
-    world.getLives().clear();
- 
-    Life l = new Life("Grass", 100, 100, 10);
+    Life l;
+    //world.getLives(true).clear();
+    //world.getLives(false).clear();
+    
+    l = new Life("Grass", 100, 100, 10);
     l.setPhotosynthesis(true);
     l.setImage("grass.svg", 100);
-    l.setAI("GrassAI");
+    l.setAIClass("GrassAI");
     world.addBirth(l);
 
     l = new Life("Grass", 150, 100, 10);
     l.setPhotosynthesis(true);
     l.setImage("grass.svg", 100);
-    l.setAI("GrassAI");
-    world.addBirth(l);
-    
-    
-    l = new Life("Tree", 250, 100, 10);
-    l.setPhotosynthesis(true);
-    l.setImage("spore.svg", 100);
-    l.setAI("TreeAI");
+    l.setAIClass("GrassAI");
     world.addBirth(l);
 
-    l = new Life("Herbivore", 80, 100, 6000);
+    l = new Life("Tree", 250, 100, 3000);
+    l.setPhotosynthesis(true);
+    l.setImage("spore.svg", 100);
+    l.setAIClass("TreeAI");
+    //world.addBirth(l);
+
+    l = new Life("Cow", 80, 100, 1000);
     l.setPhotosynthesis(false);
-    l.setColor("brown");
-    l.setAI("HerbivoreAI");
-    world.addBirth(l);
+    l.setAttack(0);
+    l.setDefence(0);
+    l.setStomachSize(0.2);
+    l.setMetabolism(0);
+    l.setImage("cow.svg", 100);
+    l.setAIClass("HerbivoreAI");
+    //world.addBirth(l);
+
+    l = new Life("Elk", 80, 100, 400);
+    l.setPhotosynthesis(false);
+    l.setAttack(0);
+    l.setDefence(0);
+    l.setStomachSize(0.8);
+    l.setMetabolism(0);
+    l.setImage("elk.svg", 100);
+    l.setAIClass("ElkAI");
+    //world.addBirth(l);
+
     
-    
- 
   }
 
   @Override

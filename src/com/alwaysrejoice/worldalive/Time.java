@@ -1,14 +1,13 @@
 package com.alwaysrejoice.worldalive;
 
-import java.text.DecimalFormat;
-
 public class Time implements Runnable {
 
   private World world = null;
   private boolean running = false;
   private boolean stopped = true;
-  
-  
+  private int moveCount = 0;
+  private StatKeeper stats = new StatKeeper();
+
   /**
    * Construct a new time with the world
    */
@@ -39,28 +38,18 @@ public class Time implements Runnable {
     running = true;
     System.out.println("Time is ticking");
     Move move = new Move(world);
-    int moveCount = 0;
     long startTime = System.currentTimeMillis();
-    double maxMass = 0;
-    DecimalFormat f = new DecimalFormat("0.##");
     
     while (running == true) {
       moveCount = 0;
       startTime = System.currentTimeMillis();
-      maxMass = 0;
+      stats.reset();
+
+      // Plants
+      processLives(move, true);
       
-      // Go through all the lives
-      for (Life life : world.getLives()) {
-        if (life.isGone()) continue;
-        
-        if (life.isAlive()) {
-          move.move(life);
-          moveCount++;
-          if (life.getMass() > maxMass) maxMass = life.getMass();
-        } else {
-          move.decay(life);
-        }
-      } // for life
+      // Animals
+      processLives(move, false);
       
       // Give birth to all the babies to be born in this round 
       // This can't be done inside the getLives loop because 
@@ -69,14 +58,19 @@ public class Time implements Runnable {
         world.addLife(baby);
         //System.out.println("Birth : "+baby);
       }
-      System.out.println("Moves="+moveCount+" maxMass="+f.format(maxMass)+" births="+world.getBirths().size()+
-          " time="+(System.currentTimeMillis()-startTime));
+      long loopTime = System.currentTimeMillis()-startTime;
+      
+      // Display
+      System.out.print(stats);
+      System.out.println("Moves="+moveCount+" births="+world.getBirths().size()+" time="+loopTime+"\n");
       world.getBirths().clear();
       
-      //System.out.println("--------------- "+moveCount+" -----------------");
-      
+      // Delay each loop by at least Const.CLOCK_DELAY
       try {
-        Thread.sleep(Const.CLOCK_DELAY);
+        long delay = Const.CLOCK_DELAY - loopTime;
+        if (delay > 0) {
+          Thread.sleep(delay);
+        }
       } catch (InterruptedException e) {
         running = false;
       }
@@ -86,5 +80,20 @@ public class Time implements Runnable {
     System.out.println("Time has stopped");
   }
 
+  
+  private void processLives(Move move, boolean photosynthesis) {
+    // Go through all the lives
+    for (Life life : world.getLives(photosynthesis)) {
+      if (life.isGone()) continue;
+      
+      if (life.isAlive()) {
+        move.move(life);
+        stats.setStat(life);
+        moveCount++;
+      } else {
+        move.decay(life);
+      }
+    } // for life
+  }
   
 }

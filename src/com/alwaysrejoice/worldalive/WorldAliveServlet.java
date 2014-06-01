@@ -21,7 +21,9 @@ public class WorldAliveServlet extends HttpServlet {
         out.println("<svg id='world' width='"+Const.MAX_X*SCALE+"' height='"+Const.MAX_Y*SCALE+"'>");
         
         World world = World.getWorld();
-        for (Life life : world.getLives()) {
+        for (Life life : world.getAllLives()) {
+          if (life.isGone()) continue;
+          
           double radius = (life.getRadius() * SCALE);
           if (radius < 1) radius = 1;
           String svgFile = life.getImgFile();
