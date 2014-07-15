@@ -1,5 +1,8 @@
 package com.alwaysrejoice.worldalive;
 
+import java.util.List;
+import java.util.Random;
+
 public class Time implements Runnable {
 
   private World world = null;
@@ -7,6 +10,7 @@ public class Time implements Runnable {
   private boolean stopped = true;
   private int moveCount = 0;
   private StatKeeper stats = new StatKeeper();
+  protected Random random = new Random();
 
   /**
    * Construct a new time with the world
@@ -83,8 +87,22 @@ public class Time implements Runnable {
   
   private void processLives(Move move, boolean photosynthesis) {
     // Go through all the lives
-    for (Life life : world.getLives(photosynthesis)) {
+    List<Life> lives = world.getLives(photosynthesis);
+    for (Life life : lives) {
       if (life.isGone()) continue;
+      
+      // Population cap NOTE! cannot be lives.size needs to be moves
+      if ((photosynthesis) && (lives.size() > Const.MAX_LIVES)) {
+        System.out.println("Lives.size ="+lives.size());
+        if (random.nextDouble() > ((double)Const.MAX_LIVES / (double)lives.size())) {
+          try {
+            System.out.println("Killed");
+            life.kill();
+          } catch (Exception e) {
+            // We know he's going to die
+          }
+        }
+      }
       
       if (life.isAlive()) {
         move.move(life);

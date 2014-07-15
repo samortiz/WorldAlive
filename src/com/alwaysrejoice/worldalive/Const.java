@@ -21,6 +21,7 @@ public class Const {
   
   // If you are smaller than this you are gone, and your place can be taken by someone else
   public static final double MIN_MASS = 10;
+  public static final int MAX_LIVES = 4000; // After this we start killing plants randomly
 
   // Size of the world
   public static final int MAX_X = 300;
@@ -41,7 +42,7 @@ public class Const {
   // This should be (0 < x <= 1)
   public static final double PHOTO_ENERGY_ABSORBED = 0.6; 
   public static final double PHOTO_ENERGY_GENERATED_PER_AREA = 1.0;
-  public static final double PLANT_BMR_PER_MASS = 0.04; // energy burned 
+  public static final double PLANT_BMR_PER_MASS = 0.01; // energy burned 
 
   
   // ------------------ Animals ---------------------------------------
@@ -55,7 +56,7 @@ public class Const {
   // --------------------- Action -------------------------------------
   
   public static final double ACTION_SCALE = 300; // How much extra action you get for your metabolism
-  public static final double ACTION_COST_TO_ATTACK = 10; // how much action it costs to attack 
+  public static final double ACTION_COST_TO_ATTACK = 20; // how much action it costs to attack 
   public static final double ACTION_COST_TO_MOVE_SCALE = 100; // how much action it costs to move 2 * radius
   public static final double ACTION_COST_TO_CONCEIVE = 50; 
   public static final double ACTION_COST_TO_DELIVER_BABY = 100;

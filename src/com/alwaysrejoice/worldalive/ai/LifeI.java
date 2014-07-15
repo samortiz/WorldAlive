@@ -244,7 +244,7 @@ public class LifeI implements Serializable {
   /**
    * Sorts the list of neighbors by mass
    */
-  public void sortNeighborsByMass(boolean photosynthesis) {
+  public void sortNeighborsByMassDesc(boolean photosynthesis) {
     Collections.sort(getNeighbors(photosynthesis).getNeighbors(), massComparatorDesc);
   }
   
@@ -266,7 +266,7 @@ public class LifeI implements Serializable {
     return him.getMass() * Const.CARNIVORE_INTAKE_MASS;
   }
   
-  public double getNetEnergyFromEating(int neighborIndex, boolean photosynthesis) {
+  public double getNetEnergyFromEating(boolean photosynthesis, int neighborIndex) {
     return getEnergyFromEating(photosynthesis, neighborIndex) - costToAttack(neighborIndex);
   }
   

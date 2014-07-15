@@ -6,12 +6,12 @@
      style="border:0px solid black" >
     
 <circle cx="50" cy="50" r="50" 
-    fill="#090" fill-opacity="0.3" stroke-width="0" />   
+    fill="#900" fill-opacity="0.3" stroke-width="0" />   
     
 <path d="M50,100 q 0,-50 -50,-50 
                  q 50,0  50,-50 
                  q 0,50  50,50 
                  q -50,0 -50,50 "
-    fill="#0A0" stroke="#363" stroke-width="4"  />
+    fill="#A00" stroke="#933" stroke-width="4"  />
  
 </svg>

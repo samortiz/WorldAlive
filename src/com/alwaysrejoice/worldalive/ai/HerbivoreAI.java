@@ -38,12 +38,12 @@ public class HerbivoreAI extends BaseAI {
     int maxLoops = 10;
     while (!stopGrazing() && (maxLoops > 0)) {
       maxLoops--;
-      me.sortNeighborsByMass(true);
+      me.sortNeighborsByMassDesc(true);
       for (int i=0; i < me.getNeighborCount(true); i++) {
         LifeI neighbor = me.getNeighbor(true, i);
         if (neighbor.getMass() < me.getMass()) {
           double maxStomachCapacity = me.getMaxStomachMass();
-          double netEnergy = me.getNetEnergyFromEating(i, true);
+          double netEnergy = me.getNetEnergyFromEating(true, i);
           //System.out.println(me.getShortId()+" mass="+Const.f(me.getMass())+" hisMass="+Const.f(neighbor.getMass())+ 
           //    " net="+Const.f(netEnergy)+" action="+Const.f(me.getAction())+
           //    " stomach "+Const.f(me.getStomachContentMass())+"/"+Const.f(me.getMaxStomachMass()));
@@ -57,11 +57,16 @@ public class HerbivoreAI extends BaseAI {
             if (moveOn()) {
               // We need to clear the neighbors and reload them for the new position
               me.clearNeighbors(true);
+              break; // exit the for loop, the while loop will catch us 
+            } else {
+              // failed to move (not enough energy likely)
+              maxLoops = 0;
               break;
             }
           }
           // Short out of the loop
-          if (stopGrazing() || (netEnergy < 0)) {
+          if (stopGrazing()) {
+            maxLoops = 0;
             break;
           }
         }

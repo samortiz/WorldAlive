@@ -35,32 +35,41 @@ public class WorldServletListener implements ServletContextListener {
     l.setAIClass("GrassAI");
     world.addBirth(l);
 
-    l = new Life("Tree", 250, 100, 3000);
+    l = new Life("Tree", 250, 100, 4000);
     l.setPhotosynthesis(true);
-    l.setImage("spore.svg", 100);
+    l.setImage("tree.svg", 100);
     l.setAIClass("TreeAI");
     //world.addBirth(l);
 
     l = new Life("Cow", 80, 100, 1000);
     l.setPhotosynthesis(false);
     l.setAttack(0);
-    l.setDefence(0);
+    l.setDefence(0.1);
     l.setStomachSize(0.2);
     l.setMetabolism(0);
     l.setImage("cow.svg", 100);
     l.setAIClass("HerbivoreAI");
-    //world.addBirth(l);
+    world.addBirth(l);
 
     l = new Life("Elk", 80, 100, 400);
     l.setPhotosynthesis(false);
     l.setAttack(0);
-    l.setDefence(0);
+    l.setDefence(0.2);
     l.setStomachSize(0.8);
     l.setMetabolism(0);
     l.setImage("elk.svg", 100);
     l.setAIClass("ElkAI");
-    //world.addBirth(l);
+    world.addBirth(l);
 
+    l = new Life("Predator", 80, 100, 1000);
+    l.setPhotosynthesis(false);
+    l.setAttack(0.3);
+    l.setDefence(0.2);
+    l.setStomachSize(0.5);
+    l.setMetabolism(0);
+    l.setImage("spikey.svg", 100);
+    l.setAIClass("CarnivoreAI");
+    //world.addBirth(l);
     
   }
 
